@@ -9,8 +9,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<GameDBContext>();
-builder.Services.AddScoped<BattlesMainLoop>();
+builder.Services.AddDbContext<GameDBContext>(ServiceLifetime.Singleton);
+builder.Services.AddSingleton<BattlesMainLoop>();
 
 
 var app = builder.Build();

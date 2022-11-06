@@ -30,7 +30,7 @@ namespace WebApplication5.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> MakeAction(string guid, int action, int enemyId)
         {
-            if (!Enum.GetValues<BattleActions>().Contains((BattleActions)action))
+            if (!Enum.GetValues<BattleActionType>().Contains((BattleActionType)action))
                 return NotFound("action");
 
             if (battleMainLoop.HasActionInCurrentTurn(guid))

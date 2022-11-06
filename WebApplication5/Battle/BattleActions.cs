@@ -1,6 +1,6 @@
 ﻿namespace WebApplication5.Battle
 {
-    public enum BattleActions
+    public enum BattleActionType
     {
         AttackTarget,
         DefenseFrom,

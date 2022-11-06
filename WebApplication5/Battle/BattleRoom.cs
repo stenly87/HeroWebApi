@@ -7,6 +7,9 @@ namespace WebApplication5.Battle
         private Room room;
         Dictionary<string, Hero> heroes = new Dictionary<string, Hero>();
         Dictionary<int, string> heroesId = new Dictionary<int, string>();
+        Queue<BattleAction> actions = new Queue<BattleAction>();
+
+        public bool IsActive { get => room.IsActive; }
 
         public BattleRoom(Room room)
         {
@@ -24,9 +27,30 @@ namespace WebApplication5.Battle
             return heroesId.ContainsKey(enemyId);
         }
 
-        internal void AddAction(string guid, int action, int enemyId)
+        internal void AddAction(string guid, int action, int targetID)
         {
-            
+            actions.Enqueue(new BattleAction { GUID = guid, Action = (BattleActionType)action, TargetID = targetID });
+        }
+
+        internal async Task MakeTurnAndStoreInfo(DB.GameDBContext context)
+        {
+            while(actions.Count > 0)
+            {
+                var action = actions.Dequeue();
+                var hero = heroes[action.GUID];
+                var target = heroes[heroesId[action.TargetID]];
+                
+                if (hero.CurrentHP > 0)
+                {
+                    string log = BattleHelper.RunAction(hero, action.Action, target);
+                    context.LogBattles.Add(new BattleLog { IDRoom = room.ID, Turn = room.CurrentTurn, HeroAction = log });
+                    context.Entry(hero).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    context.Entry(target).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                }
+            }
+            room.CurrentTurn++;
+            context.Entry(room).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            await context.SaveChangesAsync();
         }
 
         internal bool HasAction(string guid)

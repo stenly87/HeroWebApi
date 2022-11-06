@@ -5,7 +5,7 @@ namespace WebApplication5.Battle
 {
     public class BattlesMainLoop
     {
-        static Thread mainLoopTimer;
+        const int durationTimer = 2500;
         static Dictionary<int, BattleRoom> rooms = new Dictionary<int, BattleRoom>();
         static Dictionary<string, int> players = new Dictionary<string, int>();
         private readonly GameDBContext context;
@@ -13,6 +13,20 @@ namespace WebApplication5.Battle
         public BattlesMainLoop(GameDBContext _context)
         {
             context = _context;
+            var timer = async () => await CustomTimer();
+            timer.Invoke();
+        }
+
+        private async Task CustomTimer()
+        {
+            do
+            {
+                await Task.Delay(durationTimer);
+                foreach (var room in rooms.Values)
+                    if (room.IsActive)
+                        await room.MakeTurnAndStoreInfo(context);
+            }
+            while (true);
         }
 
         internal void CreateRoom(Player player, Room room)
@@ -52,7 +66,7 @@ namespace WebApplication5.Battle
 
         internal bool PlayerAlreadyInRoom(Player player)
         {
-            throw new NotImplementedException();
+            return players.ContainsKey(player.GUID);
         }
     }
 }
