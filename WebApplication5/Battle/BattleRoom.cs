@@ -16,10 +16,13 @@ namespace WebApplication5.Battle
             this.room = room;
         }
 
-        internal void AddEnemy(Player player)
+        internal bool AddEnemy(Player player)
         {
+            if (heroes.ContainsKey(player.GUID) || heroesId.ContainsKey(player.Hero.ID))
+                return false;
             heroes.Add(player.GUID, player.Hero);
             heroesId.Add(player.Hero.ID, player.GUID);
+            return true;
         }
 
         internal bool GetEnemy(int enemyId)

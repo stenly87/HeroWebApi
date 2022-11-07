@@ -1,4 +1,5 @@
-﻿using WebApplication5.DB;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApplication5.DB;
 using WebApplication5.Models;
 
 namespace WebApplication5.Battle
@@ -16,18 +17,38 @@ namespace WebApplication5.Battle
             var timer = async () => await CustomTimer();
             timer.Invoke();
 
+            var players = context.Players.Include("Hero").ToList();
             var dbRooms = context.Rooms.ToList();
+            players.ForEach(s => {
+                if (s.RoomID != 0)
+                {
+                    if (rooms.ContainsKey(s.RoomID))
+                        rooms[s.RoomID].AddEnemy(s);
+                    else
+                    {
+                        var bdRoom = dbRooms.FirstOrDefault(r => r.ID == s.RoomID);
+                        if (bdRoom != null)
+                        {
+                            var battleRoom = new BattleRoom(bdRoom);
+                            battleRoom.AddEnemy(s);
+                            rooms.Add(s.RoomID, battleRoom);
+                        }
+                        else
+                        {
+                            s.RoomID = 0;
+                            var hero = context.Heroes.Find(s.HeroID);
+                            if (hero != null)
+                                hero.IsFree = true;
+                        }
+                    }
+                }
+            });
             foreach (var room in dbRooms)
             {
-                rooms.Add(room.ID, new BattleRoom(room));
-                var players = context.Players.ToList();
-                players.ForEach(s => {
-                    if (s.RoomID != 0)
-                    {
-                        rooms[s.RoomID].AddEnemy(s);
-                    }
-                });
+                if (!rooms.ContainsKey(room.ID))
+                    rooms.Add(room.ID, new(room));
             }
+            context.SaveChanges();
         }
 
         private async Task CustomTimer()
