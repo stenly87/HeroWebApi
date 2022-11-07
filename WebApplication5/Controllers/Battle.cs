@@ -41,7 +41,7 @@ namespace WebApplication5.Controllers
         }
 
         // PUT api/<Battle>/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult> MakeAction(string guid, int action, int enemyId)
         {
             if (!Enum.GetValues<BattleActionType>().Contains((BattleActionType)action))
