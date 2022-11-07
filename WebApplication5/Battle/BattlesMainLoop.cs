@@ -23,14 +23,14 @@ namespace WebApplication5.Battle
                 if (s.RoomID != 0)
                 {
                     if (rooms.ContainsKey(s.RoomID))
-                        rooms[s.RoomID].AddEnemy(s);
+                        rooms[s.RoomID].AddEnemy(s, context);
                     else
                     {
                         var bdRoom = dbRooms.FirstOrDefault(r => r.ID == s.RoomID);
                         if (bdRoom != null)
                         {
                             var battleRoom = new BattleRoom(bdRoom);
-                            battleRoom.AddEnemy(s);
+                            battleRoom.AddEnemy(s, context);
                             rooms.Add(s.RoomID, battleRoom);
                         }
                         else
@@ -74,13 +74,13 @@ namespace WebApplication5.Battle
             var battleRoom = new BattleRoom(room);
             rooms.Add(room.ID, battleRoom);
 
-            battleRoom.AddEnemy(player);
+            battleRoom.AddEnemy(player, context);
             players.Add(player.GUID, room.ID);
         }
 
-        internal void JoinRoom(Player player, Room room)
+        internal void JoinRoom(Player player, Room room, DB.GameDBContext context)
         {
-            rooms[room.ID].AddEnemy(player);
+            rooms[room.ID].AddEnemy(player, context);
             players.Add(player.GUID, room.ID);
         }
 

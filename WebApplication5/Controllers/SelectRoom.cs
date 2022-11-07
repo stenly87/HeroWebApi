@@ -56,7 +56,7 @@ namespace WebApplication5.Controllers
 
             player.RoomID = room.ID;
             await _context.SaveChangesAsync();
-            battleMainLoop.JoinRoom(player, room);
+            battleMainLoop.JoinRoom(player, room, _context);
 
             return NoContent();
         }

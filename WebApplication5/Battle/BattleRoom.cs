@@ -1,4 +1,5 @@
-﻿using WebApplication5.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApplication5.Models;
 
 namespace WebApplication5.Battle
 {
@@ -16,10 +17,11 @@ namespace WebApplication5.Battle
             this.room = room;
         }
 
-        internal bool AddEnemy(Player player)
+        internal bool AddEnemy(Player player, DB.GameDBContext context)
         {
             if (heroes.ContainsKey(player.GUID) || heroesId.ContainsKey(player.Hero.ID))
                 return false;
+            var fullInfoHero = context.Heroes.Include("Weapon").Include("Armor").FirstOrDefault(s => s.ID == player.HeroID);
             heroes.Add(player.GUID, player.Hero);
             heroesId.Add(player.Hero.ID, player.GUID);
             return true;
