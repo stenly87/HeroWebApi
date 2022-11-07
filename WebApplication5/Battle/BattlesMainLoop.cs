@@ -15,6 +15,19 @@ namespace WebApplication5.Battle
             context = _context;
             var timer = async () => await CustomTimer();
             timer.Invoke();
+
+            var dbRooms = context.Rooms.ToList();
+            foreach (var room in dbRooms)
+            {
+                rooms.Add(room.ID, new BattleRoom(room));
+                var players = context.Players.ToList();
+                players.ForEach(s => {
+                    if (s.RoomID != 0)
+                    {
+                        rooms[s.RoomID].AddEnemy(s);
+                    }
+                });
+            }
         }
 
         private async Task CustomTimer()

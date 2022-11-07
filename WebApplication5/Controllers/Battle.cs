@@ -32,7 +32,7 @@ namespace WebApplication5.Controllers
             Hero[] heroes = battleRoom.GetHeroes();
             int lastTurn = _context.LogBattles.Where(s => s.IDRoom == id).Max(s => s.Turn);
             var actions = _context.LogBattles.Where(s => s.IDRoom == id && s.Turn == lastTurn).Select(s => s.HeroAction);
-            return Ok((heroes, actions));
+            return Ok(new BattleStatus { Heroes = heroes, Log = actions });
         }
 
         // PUT api/<Battle>/5
