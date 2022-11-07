@@ -56,6 +56,12 @@ namespace WebApplication5.Battle
             await context.SaveChangesAsync();
         }
 
+        internal Hero[] GetHeroes()
+        {
+            return heroes.Values.ToArray();
+
+        }
+
         internal bool HasAction(string guid)
         {
             return actions.FirstOrDefault(s => s.GUID == guid) != null;

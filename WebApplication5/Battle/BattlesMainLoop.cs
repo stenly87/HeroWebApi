@@ -30,6 +30,11 @@ namespace WebApplication5.Battle
             while (true);
         }
 
+        internal BattleRoom GetBattleRoom(Room room)
+        {
+            return rooms[room.ID];
+        }
+
         internal void CreateRoom(Player player, Room room)
         {
             var battleRoom = new BattleRoom(room);

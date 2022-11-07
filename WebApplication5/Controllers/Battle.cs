@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication5.Battle;
 using WebApplication5.DB;
+using WebApplication5.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +24,15 @@ namespace WebApplication5.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetStatusRoom(int id)
         {
-            return Ok();
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null)
+                return NotFound("room");
+
+            BattleRoom battleRoom = battleMainLoop.GetBattleRoom(room);
+            Hero[] heroes = battleRoom.GetHeroes();
+            int lastTurn = _context.LogBattles.Where(s => s.IDRoom == id).Max(s => s.Turn);
+            var actions = _context.LogBattles.Where(s => s.IDRoom == id && s.Turn == lastTurn).Select(s => s.HeroAction);
+            return Ok((heroes, actions));
         }
 
         // PUT api/<Battle>/5
