@@ -9,7 +9,7 @@ namespace WebApplication5.Battle
         Dictionary<int, string> heroesId = new Dictionary<int, string>();
         Queue<BattleAction> actions = new Queue<BattleAction>();
 
-        public bool IsActive { get => room.IsActive; }
+        public bool IsActive { get => room.CurrentTurn > 0 && room.IsActive; }
 
         public BattleRoom(Room room)
         {
@@ -48,6 +48,9 @@ namespace WebApplication5.Battle
                     context.Entry(target).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 }
             }
+            int aliveCount = heroes.Values.Count(s => s.CurrentHP > 0);
+            if (aliveCount <= 1)
+                room.IsActive = false;
             room.CurrentTurn++;
             context.Entry(room).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await context.SaveChangesAsync();
@@ -55,7 +58,7 @@ namespace WebApplication5.Battle
 
         internal bool HasAction(string guid)
         {
-            return false;
+            return actions.FirstOrDefault(s => s.GUID == guid) != null;
         }
     }
 }

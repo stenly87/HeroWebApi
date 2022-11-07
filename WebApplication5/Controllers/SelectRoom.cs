@@ -39,13 +39,17 @@ namespace WebApplication5.Controllers
             if (id == 1)
                 return BadRequest();
 
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.GUID == guid);
+            var player = await _context.Players.Include("Hero").FirstOrDefaultAsync(s => s.GUID == guid);
             if (player == null)
                 return NotFound("player");
 
             var room = await _context.Rooms.FindAsync(id);
             if (room == null)
                 return NotFound("room");
+
+            room.IsActive = true;
+            if (room.CurrentTurn == 0)
+                room.CurrentTurn++;
 
             if (battleMainLoop.PlayerAlreadyInRoom(player))
                 return BadRequest();

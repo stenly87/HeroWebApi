@@ -22,6 +22,7 @@ namespace WebApplication5.Battle
             do
             {
                 await Task.Delay(durationTimer);
+                Console.WriteLine("battle turn");
                 foreach (var room in rooms.Values)
                     if (room.IsActive)
                         await room.MakeTurnAndStoreInfo(context);

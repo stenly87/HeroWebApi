@@ -35,7 +35,7 @@ namespace WebApplication5.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> PostHero(int idHero)
         {
-            var hero = await _context.Heroes.FindAsync(idHero);
+            var hero = await _context.Heroes.Include("Weapon").Include("Armor").FirstOrDefaultAsync(s=>s.ID == idHero);
             if (hero == null)  
                 return NotFound();
 

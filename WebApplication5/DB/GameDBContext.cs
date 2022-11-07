@@ -22,7 +22,7 @@ namespace WebApplication5.DB
 
         public GameDBContext()
         {
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
             
             if (Rooms.Count() == 0)
